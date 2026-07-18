@@ -252,31 +252,31 @@ fieldset.module {
 }
 
 /* ---------- Login ---------- */
-.login #container {
+body.login #container {
     border-radius: 16px;
     border: 1px solid var(--border-color);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     overflow: hidden;
 }
 
-.login #header {
+body.login #header {
     padding: 20px;
     justify-content: center;
 }
 
-.login .submit-row {
+body.login .submit-row {
     border: none;
     background: transparent;
     padding: 0;
 }
 
-.login .submit-row input {
+body.login .submit-row input {
     width: 100%;
     background: var(--accent);
     font-weight: 700;
 }
 
-.login .submit-row input:hover {
+body.login .submit-row input:hover {
     background: var(--default-button-hover-bg);
 }
 

@@ -17,9 +17,10 @@ from tours.services import (
 
 
 def _upcoming_slots() -> QuerySet[Slot]:
+    refresh_slot_statuses()
     today = datetime.date.today()
     return (
-        Slot.objects.filter(date__gte=today, excursion__is_active=True)
+        Slot.objects.filter(date__gte=today, status=Slot.Status.PENDING, excursion__is_active=True)
         .select_related('excursion', 'excursion__destination', 'excursion__category', 'guide')
         .order_by('date', 'departure_time')
     )
@@ -112,7 +113,7 @@ def reserve_slot(request: HttpRequest, slot_id: int) -> HttpResponse:
         pk=slot_id,
         excursion__is_active=True,
     )
-    if slot.date < datetime.date.today():
+    if slot.status == Slot.Status.COMPLETED or slot.is_past:
         messages.error(request, 'Esta salida ya no está disponible.')
         return redirect('tours:excursion_detail', pk=slot.excursion_id)
 

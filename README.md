@@ -32,6 +32,10 @@ confirmación vía WhatsApp.
 - Redes sociales (Instagram, Facebook, WhatsApp, YouTube, X) gestionables desde el admin y
   mostradas en el footer; el enlace de WhatsApp alimenta el CTA de contacto de "Sobre Nosotros".
 - Equipo de "Sobre Nosotros" (nombre, cargo, frase, foto, orden) editable desde el admin.
+- Estado de salidas Pendiente/Completada con transición automática al vencer la hora de
+  retorno (zona horaria de La Habana); las completadas dejan de ser reservables.
+- "Recuerdos": álbumes de imágenes por salida completada (admin) mostrados en la página
+  "Excursiones anteriores".
 - Chatbot flotante (diseño Figma responsive) con agente PydanticAI: herramientas de solo
   lectura sobre toda la BD (excursiones, salidas, disponibilidad, guías, ofertas, reservas,
   redes sociales), historial persistido por sesión en la tabla `chatbot_chatmessage` y
@@ -39,6 +43,10 @@ confirmación vía WhatsApp.
 - Prompt del sistema del chatbot editable desde el admin (modelo `ChatbotPrompt`, sembrado
   desde `prompt.txt`); el agente se reconstruye automáticamente al guardar cambios, sin
   reiniciar el servidor.
+- Panel de administración con tema personalizado de la marca: logo y tipografía Inter,
+  paleta del sitio (verde oliva `#4a5d23`, naranja `#f47920`), tarjetas y botones
+  redondeados, soporte de modo claro/oscuro (`templates/admin/base_site.html` +
+  `static/css/admin.css`).
 
 ## Arquitectura
 ```
@@ -46,7 +54,7 @@ config/            Configuración del proyecto Django (settings, urls)
 tours/             App principal
 ├── models.py      Entidades: Category, Location, Guide, GastronomicOffer, Excursion,
 │                  OptionalActivity, ExcursionPhoto, ExcursionVideo, PickupPoint, Slot,
-│                  Reservation, SocialLink, TeamMember
+│                  Reservation, SocialLink, TeamMember, Memory, MemoryImage
 ├── services.py    Lógica de negocio: creación de reservas con bloqueo, URL de WhatsApp
 ├── forms.py       Formulario de reserva con validación de capacidad
 ├── views.py       Listado, detalle y reserva

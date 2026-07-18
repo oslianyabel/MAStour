@@ -12,6 +12,20 @@
   frontend muestra "por definir". El admin marca visualmente las salidas agotadas que necesitan
   punto de recogida.
 
+## Estado de las salidas
+- Cada salida tiene un estado: **Pendiente** (por defecto) o **Completada**.
+- Una salida pasa automáticamente a "Completada" cuando la fecha y hora de retorno vencen,
+  evaluadas en la zona horaria de **La Habana** (`America/Havana`).
+- La transición se aplica de forma perezosa (`refresh_slot_statuses`) al consultar listados
+  del frontend y del admin; nunca se revierte automáticamente de Completada a Pendiente.
+- Las salidas completadas no se muestran como reservables en el frontend.
+
+## Recuerdos
+- Por cada salida **completada** se puede crear un "recuerdo" (álbum) desde el admin, con un
+  listado de imágenes (con descripción opcional). Solo salidas completadas admiten recuerdos.
+- La página "Excursiones anteriores" lista todas las salidas completadas (más reciente primero)
+  y muestra las imágenes de su recuerdo; si no hay imágenes, indica que aún no hay recuerdos.
+
 ## Reservas
 - Una reserva pertenece a una salida e indica cantidad de adultos, cantidad de niños (hasta 12),
   dirección, nombre y teléfono del representante.
