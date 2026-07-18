@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
-{% block title %}Excursiones anteriores — MAS tour{% endblock %}
+{% block title %}Excursiones realizadas — MAS tour{% endblock %}
 
 {% block content %}
 <div class="page-heading">
-    <h1 class="page-title">Excursiones anteriores</h1>
+    <h1 class="page-title">Excursiones realizadas</h1>
     <p class="page-subtitle">Revive los mejores momentos de nuestras salidas pasadas</p>
 </div>
 
@@ -34,7 +34,9 @@
                         {% for image in slot.memory.images.all %}
                             <figure class="memory-figure">
                                 <img src="{{ image.image.url }}" alt="{{ image.caption|default:slot.excursion.name }}"
-                                     class="photo-strip__item" loading="lazy">
+                                     class="photo-strip__item memory-figure__img" loading="lazy"
+                                     data-lightbox-src="{{ image.image.url }}"
+                                     data-lightbox-caption="{{ image.caption }}">
                                 {% if image.caption %}<figcaption class="memory-figure__caption">{{ image.caption }}</figcaption>{% endif %}
                             </figure>
                         {% endfor %}
@@ -48,9 +50,54 @@
 {% else %}
     <div class="empty-state">
         <div class="empty-state__icon">📷</div>
-        <p class="empty-state__title">Todavía no hay excursiones anteriores</p>
+        <p class="empty-state__title">Todavía no hay excursiones realizadas</p>
         <p class="empty-state__text">Cuando nuestras salidas se completen, aquí encontrarás sus recuerdos.</p>
         <a href="{% url 'tours:excursion_list' %}" class="btn btn--outline">Ver excursiones disponibles</a>
     </div>
 {% endif %}
+
+<div class="lightbox" id="lightbox" hidden>
+    <button type="button" class="lightbox__close" aria-label="Cerrar">✕</button>
+    <figure class="lightbox__figure">
+        <img src="" alt="" class="lightbox__img" id="lightbox-img">
+        <figcaption class="lightbox__caption" id="lightbox-caption"></figcaption>
+    </figure>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    (function () {
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxCaption = document.getElementById('lightbox-caption');
+
+        function open(src, caption, alt) {
+            lightboxImg.src = src;
+            lightboxImg.alt = alt || '';
+            lightboxCaption.textContent = caption || '';
+            lightbox.hidden = false;
+            document.body.style.overflow = 'hidden';
+        }
+
+        function close() {
+            lightbox.hidden = true;
+            lightboxImg.src = '';
+            document.body.style.overflow = '';
+        }
+
+        document.querySelectorAll('[data-lightbox-src]').forEach((image) => {
+            image.addEventListener('click', () => {
+                open(image.dataset.lightboxSrc, image.dataset.lightboxCaption, image.alt);
+            });
+        });
+        lightbox.addEventListener('click', (event) => {
+            if (event.target === lightboxImg) return;
+            close();
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !lightbox.hidden) close();
+        });
+    })();
+</script>
 {% endblock %}

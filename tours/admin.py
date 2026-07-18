@@ -6,6 +6,7 @@ from tours.models import (
     Excursion,
     ExcursionPhoto,
     ExcursionVideo,
+    Faq,
     GastronomicOffer,
     Guide,
     Location,
@@ -155,6 +156,13 @@ class TeamMemberAdmin(admin.ModelAdmin):
     list_display = ['name', 'role', 'order', 'is_active']
     list_editable = ['order', 'is_active']
     search_fields = ['name', 'role']
+
+
+@admin.register(Faq)
+class FaqAdmin(admin.ModelAdmin):
+    list_display = ['question', 'order', 'is_active']
+    list_editable = ['order', 'is_active']
+    search_fields = ['question', 'answer']
 
 
 class MemoryImageInline(admin.TabularInline):

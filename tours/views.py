@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from tours.exceptions import NotEnoughCapacityError
 from tours.forms import ReservationForm
-from tours.models import Category, Excursion, Location, Slot, SocialLink, TeamMember
+from tours.models import Category, Excursion, Faq, Location, Slot, SocialLink, TeamMember
 from tours.services import (
     ReservationData,
     build_whatsapp_url,
@@ -91,6 +91,12 @@ def past_excursions(request: HttpRequest) -> HttpResponse:
         .order_by('-date', '-departure_time')
     )
     return render(request, 'tours/past_excursions.html', {'slots': slots})
+
+
+def faq(request: HttpRequest) -> HttpResponse:
+    """Frequently asked questions page."""
+    faqs = Faq.objects.filter(is_active=True)
+    return render(request, 'tours/faq.html', {'faqs': faqs})
 
 
 def about(request: HttpRequest) -> HttpResponse:

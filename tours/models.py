@@ -349,6 +349,23 @@ class MemoryImage(models.Model):
         return self.caption or f'Imagen #{self.pk}'
 
 
+class Faq(models.Model):
+    """Frequently asked question shown on the FAQ page, managed from the admin."""
+
+    question: models.CharField = models.CharField('pregunta', max_length=300)
+    answer: models.TextField = models.TextField('respuesta')
+    order: models.PositiveIntegerField = models.PositiveIntegerField('orden', default=0)
+    is_active: models.BooleanField = models.BooleanField('activa', default=True)
+
+    class Meta:
+        verbose_name = 'pregunta frecuente'
+        verbose_name_plural = 'preguntas frecuentes'
+        ordering = ['order', 'id']
+
+    def __str__(self) -> str:
+        return self.question
+
+
 class SocialLink(models.Model):
     """Social network link shown in the site footer, managed from the admin."""
 
@@ -358,6 +375,7 @@ class SocialLink(models.Model):
         WHATSAPP = 'whatsapp', 'WhatsApp'
         YOUTUBE = 'youtube', 'YouTube'
         X = 'x', 'X'
+        TELEGRAM = 'telegram', 'Telegram'
 
     platform: models.CharField = models.CharField(
         'plataforma', max_length=20, choices=Platform.choices, unique=True

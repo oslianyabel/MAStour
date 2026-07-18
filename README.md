@@ -35,7 +35,9 @@ confirmación vía WhatsApp.
 - Estado de salidas Pendiente/Completada con transición automática al vencer la hora de
   retorno (zona horaria de La Habana); las completadas dejan de ser reservables.
 - "Recuerdos": álbumes de imágenes por salida completada (admin) mostrados en la página
-  "Excursiones anteriores".
+  "Excursiones realizadas", con lightbox para ampliar cada imagen.
+- Preguntas frecuentes gestionables desde el admin (pregunta, respuesta, orden, activa) y
+  publicadas en `/preguntas-frecuentes/` como acordeón.
 - Chatbot flotante (diseño Figma responsive) con agente PydanticAI: herramientas de solo
   lectura sobre toda la BD (excursiones, salidas, disponibilidad, guías, ofertas, reservas,
   redes sociales), historial persistido por sesión en la tabla `chatbot_chatmessage` y
@@ -54,7 +56,7 @@ config/            Configuración del proyecto Django (settings, urls)
 tours/             App principal
 ├── models.py      Entidades: Category, Location, Guide, GastronomicOffer, Excursion,
 │                  OptionalActivity, ExcursionPhoto, ExcursionVideo, PickupPoint, Slot,
-│                  Reservation, SocialLink, TeamMember, Memory, MemoryImage
+│                  Reservation, SocialLink, TeamMember, Memory, MemoryImage, Faq
 ├── services.py    Lógica de negocio: creación de reservas con bloqueo, URL de WhatsApp
 ├── forms.py       Formulario de reserva con validación de capacidad
 ├── views.py       Listado, detalle y reserva
@@ -97,6 +99,12 @@ uv run python manage.py runserver         # http://127.0.0.1:8000
 ```
 Panel de administración: `http://127.0.0.1:8000/admin/`
 (usuario de desarrollo creado: `admin` / `admin12345` — cambiar en producción).
+
+## Despliegue
+Guía completa para VPS de Hostinger (gunicorn + nginx + systemd + SSL):
+[docs/deploy_hostinger.md](docs/deploy_hostinger.md). Variables de producción:
+`DJANGO_SECRET_KEY`, `DJANGO_DEBUG=False`, `DJANGO_ALLOWED_HOSTS`,
+`DJANGO_CSRF_TRUSTED_ORIGINS` y `GEMINI_API_KEY`.
 
 ## Linting
 ```bash

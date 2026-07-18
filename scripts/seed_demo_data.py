@@ -21,6 +21,7 @@ from django.core.files import File  # noqa: E402
 from tours.models import (  # noqa: E402
     Category,
     Excursion,
+    Faq,
     GastronomicOffer,
     Guide,
     Location,
@@ -108,6 +109,7 @@ def seed() -> None:
         SocialLink.Platform.WHATSAPP: 'https://wa.me/5352123456',
         SocialLink.Platform.YOUTUBE: 'https://youtube.com/@mastour',
         SocialLink.Platform.X: 'https://x.com/mastour',
+        SocialLink.Platform.TELEGRAM: 'https://t.me/mastour',
     }
     for platform, url in social_urls.items():
         SocialLink.objects.get_or_create(platform=platform, defaults={'url': url})
@@ -160,6 +162,23 @@ def seed() -> None:
                 memory_image = MemoryImage(memory=memory, caption=caption)
                 with source_image.open('rb') as image_file:
                     memory_image.image.save(image_name, File(image_file), save=True)
+
+    demo_faqs = [
+        ('¿Cómo reservo una excursión?',
+         'Elige la excursión, selecciona la fecha de salida y completa el formulario de reserva. '
+         'Al confirmar, se abrirá el chat de WhatsApp del organizador con los datos de tu reserva.'),
+        ('¿Cómo pago mi reserva?',
+         'El pago se coordina por WhatsApp y se realiza en la dirección de pago indicada en cada salida.'),
+        ('¿Hasta qué edad aplica el precio de niños?',
+         'El precio de niños aplica hasta los 12 años inclusive.'),
+        ('¿Dónde es el punto de recogida?',
+         'El punto de recogida se define y anuncia cuando la salida completa todas sus plazas.'),
+        ('¿Qué pasa si se agotan las plazas?',
+         'Cada salida tiene capacidad limitada. Si se agota, puedes elegir otra fecha disponible '
+         'de la misma excursión.'),
+    ]
+    for index, (question, answer) in enumerate(demo_faqs):
+        Faq.objects.get_or_create(question=question, defaults={'answer': answer, 'order': index})
 
     print('Demo data seeded successfully.')
 

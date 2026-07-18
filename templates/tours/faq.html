@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Preguntas frecuentes — MAS tour{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <h1 class="page-title">Preguntas frecuentes</h1>
+    <p class="page-subtitle">Resolvemos tus dudas antes de reservar</p>
+</div>
+
+{% if faqs %}
+    <div class="faq-list">
+        {% for faq in faqs %}
+            <details class="faq-item">
+                <summary class="faq-item__question">
+                    {{ faq.question }}
+                    <span class="faq-item__icon" aria-hidden="true"></span>
+                </summary>
+                <div class="faq-item__answer">{{ faq.answer|linebreaks }}</div>
+            </details>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <div class="empty-state__icon">❓</div>
+        <p class="empty-state__title">Aún no hay preguntas frecuentes publicadas</p>
+        <p class="empty-state__text">Muy pronto encontrarás aquí las respuestas a las dudas más comunes.</p>
+        <a href="{% url 'tours:excursion_list' %}" class="btn btn--outline">Ver excursiones disponibles</a>
+    </div>
+{% endif %}
+{% endblock %}

@@ -23,8 +23,17 @@
 ## Recuerdos
 - Por cada salida **completada** se puede crear un "recuerdo" (álbum) desde el admin, con un
   listado de imágenes (con descripción opcional). Solo salidas completadas admiten recuerdos.
-- La página "Excursiones anteriores" lista todas las salidas completadas (más reciente primero)
-  y muestra las imágenes de su recuerdo; si no hay imágenes, indica que aún no hay recuerdos.
+- La página "Excursiones realizadas" (`/excursiones-realizadas/`) lista todas las salidas
+  completadas (más reciente primero) y muestra las imágenes de su recuerdo con lightbox para
+  ampliarlas; si no hay imágenes, indica que aún no hay recuerdos.
+
+## Preguntas frecuentes
+- Las preguntas frecuentes (pregunta, respuesta, orden, activa) se gestionan desde el admin y
+  se publican en `/preguntas-frecuentes/`; solo se muestran las activas, ordenadas por "orden".
+
+## Menú principal
+- Elementos: "Excursiones disponibles" (home), "Excursiones realizadas", "Preguntas
+  frecuentes" y "Sobre Nosotros".
 
 ## Reservas
 - Una reserva pertenece a una salida e indica cantidad de adultos, cantidad de niños (hasta 12),
