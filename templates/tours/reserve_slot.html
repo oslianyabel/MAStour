@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Reservar — {{ slot.excursion.name }} · MAS tour{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb">
+    <a href="{% url 'tours:excursion_detail' slot.excursion.pk %}" class="breadcrumb__link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        {{ slot.excursion.name }}
+    </a>
+    <span class="breadcrumb__sep">/</span>
+    <span class="breadcrumb__current">Reservar</span>
+</nav>
+
+<h1 class="page-title">Reservar</h1>
+
+<div class="booking-layout">
+    <aside class="panel booking-summary">
+        <div class="booking-summary__head">
+            <p class="booking-summary__title">{{ slot.excursion.name }}</p>
+            <span class="chip chip--available">{{ slot.seats_available }} plazas disponibles</span>
+        </div>
+        <p class="booking-summary__line">📅 {{ slot.date|date:'l d \d\e F' }} · 🕐 {{ slot.departure_time|time:'H:i' }}</p>
+        <p class="booking-summary__line">Adultos: ${{ slot.excursion.adult_price|floatformat:'2u' }} · Niños: ${{ slot.excursion.child_price|floatformat:'2u' }}</p>
+        <p class="booking-summary__line">📍 {{ slot.excursion.destination.name }}, Cuba</p>
+        <div class="booking-summary__totals">
+            <p class="booking-summary__total-row">
+                <span>Adultos (x<span id="adults-qty">0</span>)</span>
+                <span id="adults-subtotal">$0.00</span>
+            </p>
+            <p class="booking-summary__total-row">
+                <span>Niños (x<span id="children-qty">0</span>)</span>
+                <span id="children-subtotal">$0.00</span>
+            </p>
+            <p class="booking-summary__total-row booking-summary__total-row--grand">
+                <span>Total Estimado</span>
+                <span id="grand-total" class="price-value price-value--lg">$0.00</span>
+            </p>
+        </div>
+    </aside>
+
+    <form method="post" class="booking-form" novalidate>
+        {% csrf_token %}
+        <div class="panel booking-form__card">
+            <h2 class="booking-form__title">Datos de Reserva</h2>
+            {% if form.non_field_errors %}
+                <div class="error-banner" role="alert">
+                    ⚠ {{ form.non_field_errors|striptags }}
+                </div>
+            {% endif %}
+            <div class="booking-form__fields">
+                {% for field in form %}
+                    <div class="form-field {% if field.errors %}form-field--error{% endif %}">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}<p class="form-field__error">{{ field.errors|striptags }}</p>{% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="booking-form__cta-group">
+            <button type="submit" class="btn btn--whatsapp btn--block">
+                Confirmar y continuar en WhatsApp 💬
+            </button>
+            <p class="booking-form__hint">
+                Al confirmar, se abrirá el chat de WhatsApp del organizador con los datos de tu reserva.
+            </p>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    (function () {
+        const ADULT_PRICE = {{ slot.excursion.adult_price|floatformat:'2u' }};
+        const CHILD_PRICE = {{ slot.excursion.child_price|floatformat:'2u' }};
+        const adultsInput = document.getElementById('{{ form.adults_count.id_for_label }}');
+        const childrenInput = document.getElementById('{{ form.children_count.id_for_label }}');
+        const format = (value) => '$' + value.toFixed(2);
+
+        function updateTotals() {
+            const adults = parseInt(adultsInput.value, 10) || 0;
+            const children = parseInt(childrenInput.value, 10) || 0;
+            document.getElementById('adults-qty').textContent = adults;
+            document.getElementById('children-qty').textContent = children;
+            document.getElementById('adults-subtotal').textContent = format(adults * ADULT_PRICE);
+            document.getElementById('children-subtotal').textContent = format(children * CHILD_PRICE);
+            document.getElementById('grand-total').textContent = format(adults * ADULT_PRICE + children * CHILD_PRICE);
+        }
+
+        adultsInput.addEventListener('input', updateTotals);
+        childrenInput.addEventListener('input', updateTotals);
+        updateTotals();
+    })();
+</script>
+{% endblock %}

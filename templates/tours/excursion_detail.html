@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load l10n %}
+
+{% block title %}{{ excursion.name }} — MAS tour{% endblock %}
+
+{% block extra_head %}
+{% if excursion.has_map %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb">
+    <a href="{% url 'tours:excursion_list' %}" class="breadcrumb__link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Todas las excursiones
+    </a>
+    <span class="breadcrumb__sep">/</span>
+    <span class="breadcrumb__current">{{ excursion.name }}</span>
+</nav>
+
+<article class="detail">
+    <header class="panel detail-header">
+        <div class="detail-header__row">
+            <h1 class="detail-header__title">{{ excursion.name }}</h1>
+            <span class="badge-category badge-category--static">{{ excursion.category.name }}</span>
+        </div>
+        <p class="detail-header__location">📍 {{ excursion.destination.name }}, Cuba</p>
+        <p class="detail-header__prices">
+            <span>Adultos: <strong class="price-value price-value--lg">${{ excursion.adult_price|floatformat:'2u' }}</strong></span>
+            <span>Niños: <strong class="price-value price-value--lg">${{ excursion.child_price|floatformat:'2u' }}</strong></span>
+        </p>
+    </header>
+
+    {% if excursion.description %}
+        <section class="panel detail-description">
+            <h2 class="detail-description__title">Descripción</h2>
+            <p class="detail-description__text">{{ excursion.description|linebreaksbr }}</p>
+        </section>
+    {% endif %}
+
+    {% if destination_photos %}
+        <section class="detail-section">
+            <h2 class="section-title">Fotos del destino</h2>
+            <div class="photo-strip">
+                {% for photo in destination_photos %}
+                    <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:excursion.name }}"
+                         class="photo-strip__item" loading="lazy">
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    {% if transport_photos %}
+        <section class="detail-section">
+            <h2 class="section-title">Transporte</h2>
+            <div class="photo-strip">
+                {% for photo in transport_photos %}
+                    <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:'Transporte' }}"
+                         class="photo-strip__item" loading="lazy">
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    {% if excursion.videos.all %}
+        <section class="detail-section">
+            <h2 class="section-title">Videos</h2>
+            <div class="video-list">
+                {% for video in excursion.videos.all %}
+                    {% if video.video_file %}
+                        <video controls preload="metadata" class="video-player">
+                            <source src="{{ video.video_file.url }}">
+                            Tu navegador no soporta video HTML5.
+                        </video>
+                    {% elif video.video_url %}
+                        <a href="{{ video.video_url }}" target="_blank" rel="noopener" class="btn btn--outline btn--block">
+                            ▶ {{ video.title|default:'Ver video promocional' }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    {% if excursion.optional_activities.all %}
+        <section class="detail-section">
+            <h2 class="section-title">Actividades opcionales</h2>
+            <ul class="activity-list">
+                {% for activity in excursion.optional_activities.all %}
+                    <li class="activity-list__item">
+                        <span class="activity-list__name">{{ activity.name }}</span>
+                        {% if activity.price %}
+                            <strong class="price-value">${{ activity.price|floatformat:'2u' }}</strong>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% endif %}
+
+    {% if excursion.has_map %}
+        <section class="detail-section">
+            <h2 class="section-title">Ubicación</h2>
+            <div id="map" class="map"></div>
+        </section>
+    {% endif %}
+
+    <section class="detail-section">
+        <h2 class="section-title">Próximas salidas</h2>
+        {% if slots %}
+            <div class="slot-list">
+                {% for slot in slots %}
+                    <div class="slot-card {% if slot.is_sold_out %}slot-card--full{% endif %}">
+                        <div class="slot-card__head">
+                            <p class="slot-card__date">📅 {{ slot.date|date:'l d \d\e F' }}</p>
+                            {% if slot.is_sold_out %}
+                                <span class="chip chip--full">Agotada</span>
+                            {% else %}
+                                <span class="chip chip--available">{{ slot.seats_available }} plazas</span>
+                            {% endif %}
+                        </div>
+                        <div class="slot-card__details">
+                            <p>🕐 Salida {{ slot.departure_time|time:'H:i' }} · Retorno {{ slot.return_time|time:'H:i' }}</p>
+                            <p>🧑‍💼 Guía: {{ slot.guide.name }}</p>
+                            {% if slot.pickup_point %}
+                                <p>🚏 Recogida: {{ slot.pickup_point.name }}</p>
+                            {% else %}
+                                <p class="slot-card__pending">🚏 Punto de recogida: por definir (se anuncia al completarse las plazas)</p>
+                            {% endif %}
+                            <p>💳 Pago: {{ slot.payment_address }}</p>
+                        </div>
+                        {% if slot.gastronomic_offers.all %}
+                            <div class="slot-card__food">
+                                <p class="slot-card__food-title">🍽️ Ofertas gastronómicas</p>
+                                {% for offer in slot.gastronomic_offers.all %}
+                                    <p class="slot-card__food-item">· {{ offer.name }} ${{ offer.price|floatformat:'2u' }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if not slot.is_sold_out %}
+                            <a href="{% url 'tours:reserve_slot' slot.pk %}" class="btn btn--primary btn--block">Reservar</a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state__icon">🌴</div>
+                <p class="empty-state__title">No hay salidas programadas próximamente</p>
+            </div>
+        {% endif %}
+    </section>
+</article>
+{% endblock %}
+
+{% block extra_scripts %}
+{% if excursion.has_map %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    const map = L.map('map').setView([{{ excursion.latitude|unlocalize }}, {{ excursion.longitude|unlocalize }}], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+    L.marker([{{ excursion.latitude|unlocalize }}, {{ excursion.longitude|unlocalize }}])
+        .addTo(map)
+        .bindPopup('{{ excursion.name|escapejs }}');
+</script>
+{% endif %}
+{% endblock %}

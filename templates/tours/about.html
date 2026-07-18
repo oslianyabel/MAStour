@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sobre Nosotros — MAS tour{% endblock %}
+
+{% block content %}{% endblock %}
+
+{% block full_width %}
+<section class="about-hero">
+    <img src="{% static 'img/about-hero.png' %}" alt="" class="about-hero__img">
+    <div class="about-hero__overlay"></div>
+    <div class="container about-hero__content">
+        <h1 class="about-hero__title">Sobre Nosotros</h1>
+        <p class="about-hero__subtitle">La esencia de Cuba a través de tus ojos</p>
+    </div>
+</section>
+
+<div class="container about-body">
+    <section class="about-philosophy">
+        <div class="about-philosophy__text">
+            <div class="decorated-heading">
+                <span class="decorated-heading__bar"></span>
+                <h2 class="decorated-heading__title">Nuestra Filosofía</h2>
+            </div>
+            <p class="about-philosophy__quote">
+                "Bienvenido a MAStour. Hay excursiones que solo te llevan de un punto a otro.
+                Y luego están las que te conectan con la esencia del lugar."
+            </p>
+            <p class="about-philosophy__body">
+                En MAS Tour hemos diseñado excursiones de un día completo donde cada minuto tiene sentido:
+                sabores ☕, paisajes ☀️, historia y ese plus de atención ❤️ que nos diferencia del resto.
+            </p>
+        </div>
+        <img src="{% static 'img/about-philosophy.png' %}" alt="Café cubano" class="about-philosophy__img">
+    </section>
+
+    {% if team_members %}
+        <section class="about-team">
+            <div class="about-team__header">
+                <h2 class="about-team__title">Nuestro Equipo</h2>
+                <p class="about-team__subtitle">Las personas detrás de cada aventura</p>
+            </div>
+            <div class="team-grid">
+                {% for member in team_members %}
+                    <div class="team-card">
+                        {% if member.photo %}
+                            <img src="{{ member.photo.url }}" alt="{{ member.name }}" class="team-card__avatar">
+                        {% else %}
+                            <div class="team-card__avatar team-card__avatar--placeholder">🧑‍💼</div>
+                        {% endif %}
+                        <div class="team-card__info">
+                            <p class="team-card__name">{{ member.name }}</p>
+                            <p class="team-card__role">{{ member.role }}</p>
+                        </div>
+                        {% if member.quote %}
+                            <p class="team-card__quote">"{{ member.quote }}"</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    <section class="about-cta">
+        <div class="about-cta__text">
+            <h2 class="about-cta__title">¿Listo para vivir Cuba de verdad?</h2>
+            <p class="about-cta__subtitle">
+                Reserva tu excursión ideal hoy mismo o pregúntanos cualquier duda sin compromiso.
+            </p>
+        </div>
+        <div class="about-cta__buttons">
+            <a href="{% url 'tours:excursion_list' %}" class="btn btn--white">Explorar excursiones</a>
+            {% if whatsapp_link %}
+                <a href="{{ whatsapp_link.url }}" target="_blank" rel="noopener" class="btn btn--orange">
+                    Contáctanos por WhatsApp 💬
+                </a>
+            {% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}

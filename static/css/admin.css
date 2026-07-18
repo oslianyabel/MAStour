@@ -1,0 +1,295 @@
+/* MAS tour — tema personalizado del admin de Django (paleta del sitio web) */
+
+html[data-theme="light"],
+:root {
+    --primary: #4a5d23;
+    --secondary: #4a5d23;
+    --accent: #f47920;
+    --primary-fg: #fff;
+
+    --header-color: #e2f1d9;
+    --header-branding-color: var(--accent);
+    --header-bg: #4a5d23;
+    --header-link-color: #fff;
+
+    --breadcrumbs-fg: #cfe0b8;
+    --breadcrumbs-link-fg: #fff;
+    --breadcrumbs-bg: #3a4a1c;
+
+    --link-fg: #4a5d23;
+    --link-hover-color: #6ba629;
+    --link-selected-fg: #6ba629;
+
+    --hairline-color: #e5e7eb;
+    --border-color: #e5e7eb;
+
+    --darkened-bg: #f8f9fa;
+    --selected-bg: #eaf5ea;
+    --selected-row: #eaf5ea;
+
+    --button-fg: #fff;
+    --button-bg: #4a5d23;
+    --button-hover-bg: #3a4a1c;
+    --default-button-bg: #f47920;
+    --default-button-hover-bg: #d9660f;
+    --close-button-bg: #6b7280;
+    --close-button-hover-bg: #4b5563;
+
+    --object-tools-bg: #6ba629;
+    --object-tools-hover-bg: #4a5d23;
+
+    --message-success-bg: #eaf5ea;
+
+    --font-family-primary:
+        "Inter",
+        "Segoe UI",
+        system-ui,
+        Roboto,
+        "Helvetica Neue",
+        Arial,
+        sans-serif,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        "Noto Color Emoji";
+}
+
+/* Tema oscuro: mantiene la marca con verdes más luminosos para contraste */
+html[data-theme="dark"] {
+    --primary: #6ba629;
+    --secondary: #3a4a1c;
+    --header-bg: #2c3816;
+    --breadcrumbs-bg: #232d12;
+    --breadcrumbs-fg: #cfe0b8;
+    --link-fg: #8fbe4f;
+    --link-hover-color: #a9d16e;
+    --link-selected-fg: #a9d16e;
+    --button-bg: #4a5d23;
+    --button-hover-bg: #5a7029;
+    --object-tools-bg: #4a5d23;
+    --object-tools-hover-bg: #6ba629;
+    --selected-bg: #33411a;
+    --selected-row: #33411a;
+    --message-success-bg: #33411a;
+}
+
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme="light"]) {
+        --primary: #6ba629;
+        --secondary: #3a4a1c;
+        --header-bg: #2c3816;
+        --breadcrumbs-bg: #232d12;
+        --breadcrumbs-fg: #cfe0b8;
+        --link-fg: #8fbe4f;
+        --link-hover-color: #a9d16e;
+        --link-selected-fg: #a9d16e;
+        --button-bg: #4a5d23;
+        --button-hover-bg: #5a7029;
+        --object-tools-bg: #4a5d23;
+        --object-tools-hover-bg: #6ba629;
+        --selected-bg: #33411a;
+        --selected-row: #33411a;
+        --message-success-bg: #33411a;
+    }
+}
+
+/* ---------- Cabecera con logo ---------- */
+#header {
+    padding: 12px 40px;
+    align-items: center;
+}
+
+.admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.admin-brand__logo {
+    width: 34px;
+    height: 32px;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 8px;
+    padding: 3px;
+}
+
+.admin-brand__name {
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.2px;
+}
+
+.admin-brand__accent {
+    color: var(--accent);
+}
+
+.admin-brand__divider {
+    width: 1px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.admin-brand__suffix {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--header-color);
+}
+
+#site-name a:focus, #site-name a:hover {
+    color: #fff;
+}
+
+#user-tools {
+    font-size: 12px;
+}
+
+#user-tools a {
+    border-bottom: none;
+    font-weight: 600;
+}
+
+/* ---------- Módulos y tablas con tarjetas redondeadas ---------- */
+.module {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    background: var(--body-bg);
+}
+
+.module h2, .module caption, .inline-group h2 {
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+#content-main .module table {
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    margin-bottom: 0;
+}
+
+#changelist .results {
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    overflow-x: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+#changelist .results > table {
+    margin-bottom: 0;
+}
+
+thead th {
+    background: var(--darkened-bg);
+    font-weight: 700;
+}
+
+/* ---------- Botones redondeados ---------- */
+.button, input[type="submit"], input[type="button"], .submit-row input, a.button {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 8px 16px;
+    transition: background 0.15s ease;
+}
+
+.button.default, input[type="submit"].default, .submit-row input.default {
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.object-tools a {
+    border-radius: 16px;
+    font-weight: 600;
+}
+
+.submit-row {
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background: var(--darkened-bg);
+}
+
+/* ---------- Filtros laterales ---------- */
+#changelist-filter {
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background: var(--darkened-bg);
+}
+
+#changelist-filter h2 {
+    background: var(--primary);
+    color: var(--primary-fg);
+    border-radius: 0;
+    font-weight: 700;
+}
+
+#changelist-filter li.selected a {
+    color: var(--link-selected-fg);
+    font-weight: 700;
+}
+
+/* ---------- Formularios ---------- */
+input[type="text"], input[type="password"], input[type="email"], input[type="url"],
+input[type="number"], input[type="tel"], textarea, select, .vTextField {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 6px 10px;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus,
+input[type="url"]:focus, input[type="number"]:focus, input[type="tel"]:focus,
+textarea:focus, select:focus, .vTextField:focus {
+    border-color: var(--primary);
+    outline: 1px solid var(--primary);
+}
+
+fieldset.module {
+    border-radius: 12px;
+}
+
+/* ---------- Login ---------- */
+.login #container {
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+}
+
+.login #header {
+    padding: 20px;
+    justify-content: center;
+}
+
+.login .submit-row {
+    border: none;
+    background: transparent;
+    padding: 0;
+}
+
+.login .submit-row input {
+    width: 100%;
+    background: var(--accent);
+    font-weight: 700;
+}
+
+.login .submit-row input:hover {
+    background: var(--default-button-hover-bg);
+}
+
+/* ---------- Dashboard ---------- */
+#content-related .module {
+    background: var(--darkened-bg);
+}
+
+#recent-actions-module h2 {
+    background: transparent;
+    color: var(--body-fg);
+}
+
+.dashboard .module table th {
+    width: 100%;
+}

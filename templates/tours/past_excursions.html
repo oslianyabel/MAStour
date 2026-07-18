@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Excursiones anteriores — MAS tour{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <h1 class="page-title">Excursiones anteriores</h1>
+    <p class="page-subtitle">Revive los mejores momentos de nuestras salidas pasadas</p>
+</div>
+
+{% if slots %}
+    <div class="past-list">
+        {% for slot in slots %}
+            <article class="panel past-card">
+                <div class="past-card__head">
+                    <div class="past-card__titles">
+                        <h2 class="past-card__title">{{ slot.excursion.name }}</h2>
+                        <p class="past-card__meta">
+                            📍 {{ slot.excursion.destination.name }} ·
+                            📅 {{ slot.date|date:'l d \d\e F Y' }} ·
+                            🧑‍💼 {{ slot.guide.name }}
+                        </p>
+                    </div>
+                    <span class="badge-category badge-category--static">{{ slot.excursion.category.name }}</span>
+                </div>
+                {% if slot.memory and slot.memory.images.all %}
+                    {% if slot.memory.title %}
+                        <p class="past-card__memory-title">{{ slot.memory.title }}</p>
+                    {% endif %}
+                    {% if slot.memory.description %}
+                        <p class="past-card__memory-text">{{ slot.memory.description|linebreaksbr }}</p>
+                    {% endif %}
+                    <div class="photo-strip">
+                        {% for image in slot.memory.images.all %}
+                            <figure class="memory-figure">
+                                <img src="{{ image.image.url }}" alt="{{ image.caption|default:slot.excursion.name }}"
+                                     class="photo-strip__item" loading="lazy">
+                                {% if image.caption %}<figcaption class="memory-figure__caption">{{ image.caption }}</figcaption>{% endif %}
+                            </figure>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="past-card__empty">📷 Aún no hay recuerdos de esta salida.</p>
+                {% endif %}
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <div class="empty-state__icon">📷</div>
+        <p class="empty-state__title">Todavía no hay excursiones anteriores</p>
+        <p class="empty-state__text">Cuando nuestras salidas se completen, aquí encontrarás sus recuerdos.</p>
+        <a href="{% url 'tours:excursion_list' %}" class="btn btn--outline">Ver excursiones disponibles</a>
+    </div>
+{% endif %}
+{% endblock %}

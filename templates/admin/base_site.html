@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | MAS tour Admin{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+    <a href="{% url 'admin:index' %}" class="admin-brand">
+        <img src="{% static 'img/logo.png' %}" alt="MAS tour" class="admin-brand__logo">
+        <span class="admin-brand__name">MAS <span class="admin-brand__accent">tour</span></span>
+        <span class="admin-brand__divider"></span>
+        <span class="admin-brand__suffix">Administración</span>
+    </a>
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+{% endblock %}

@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "django-dev",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-Command", "uv run python manage.py runserver $env:PORT"],
+      "port": 8000,
+      "autoPort": true
+    }
+  ]
+}

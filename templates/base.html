@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MAS tour{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="{% url 'tours:excursion_list' %}" class="brand">
+                <img src="{% static 'img/logo.png' %}" alt="MAS tour" class="brand__logo">
+                <span class="brand__name">MAS <span class="brand__accent">tour</span></span>
+            </a>
+            {% with current_page=request.resolver_match.url_name %}
+            <nav class="main-nav" id="main-nav">
+                <a href="{% url 'tours:excursion_list' %}"
+                   class="main-nav__link {% if current_page != 'about' and current_page != 'past_excursions' %}main-nav__link--active{% endif %}">Destinos</a>
+                <a href="{% url 'tours:past_excursions' %}"
+                   class="main-nav__link {% if current_page == 'past_excursions' %}main-nav__link--active{% endif %}">Excursiones anteriores</a>
+                <a href="{% url 'tours:about' %}"
+                   class="main-nav__link {% if current_page == 'about' %}main-nav__link--active{% endif %}">Sobre Nosotros</a>
+            </nav>
+            {% endwith %}
+            <button type="button" class="menu-toggle" aria-label="Menú" aria-expanded="false"
+                    onclick="document.body.classList.toggle('nav-open'); this.setAttribute('aria-expanded', document.body.classList.contains('nav-open'));">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2d2d2d" stroke-width="2.5" stroke-linecap="round">
+                    <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    {% block full_width %}{% endblock %}
+
+    <main class="container">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message message--{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <p class="footer-brand">MAS <span class="brand__accent">tour</span> — Explora Cuba con seguridad y confianza 🚌</p>
+            {% if social_links %}
+                <div class="social-links">
+                    {% for link in social_links %}
+                        <a href="{{ link.url }}" target="_blank" rel="noopener" class="social-links__item"
+                           aria-label="{{ link.get_platform_display }}" title="{{ link.get_platform_display }}">
+                            {% if link.platform == 'instagram' %}
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.8.07 1.2.05 1.8.24 2.2.4.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.4.35 1 .4 2.2.07 1.2.07 1.6.07 4.85s0 3.6-.07 4.85c-.05 1.2-.24 1.8-.4 2.2a3.7 3.7 0 0 1-.9 1.38 3.7 3.7 0 0 1-1.38.9c-.4.16-1 .35-2.2.4-1.2.07-1.6.07-4.8.07s-3.6 0-4.8-.07c-1.2-.05-1.8-.24-2.2-.4a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.4-.35-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.85c.05-1.2.24-1.8.4-2.2.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.4-.16 1-.35 2.2-.4C8.4 2.2 8.8 2.2 12 2.2m0 1.8c-3.15 0-3.52 0-4.76.07-1.15.05-1.77.24-2.18.4-.55.22-.94.47-1.35.88-.4.41-.66.8-.87 1.35-.17.41-.36 1.03-.41 2.18C2.36 8.48 2.35 8.85 2.35 12s0 3.52.08 4.76c.05 1.15.24 1.77.4 2.18.22.55.47.94.88 1.35.41.4.8.66 1.35.87.41.17 1.03.36 2.18.41 1.24.07 1.61.08 4.76.08s3.52 0 4.76-.08c1.15-.05 1.77-.24 2.18-.4.55-.22.94-.47 1.35-.88.4-.41.66-.8.87-1.35.17-.41.36-1.03.41-2.18.07-1.24.08-1.61.08-4.76s0-3.52-.08-4.76c-.05-1.15-.24-1.77-.4-2.18a2.9 2.9 0 0 0-.88-1.35 2.9 2.9 0 0 0-1.35-.87c-.41-.17-1.03-.36-2.18-.41C15.52 4 15.15 4 12 4m0 3.06a4.94 4.94 0 1 1 0 9.88 4.94 4.94 0 0 1 0-9.88m0 1.8a3.14 3.14 0 1 0 0 6.28 3.14 3.14 0 0 0 0-6.28m6.28-2.03a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0"/></svg>
+                            {% elif link.platform == 'facebook' %}
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.9h2.54V9.85c0-2.52 1.5-3.9 3.77-3.9 1.1 0 2.24.2 2.24.2v2.46H15.2c-1.24 0-1.63.78-1.63 1.57v1.88h2.78l-.45 2.9h-2.33V22c4.78-.76 8.44-4.92 8.44-9.94"/></svg>
+                            {% elif link.platform == 'whatsapp' %}
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.96L2 22l5.16-1.5A9.9 9.9 0 1 0 12.04 2m0 1.8a8.1 8.1 0 1 1-4.1 15.1l-.3-.17-3.06.9.92-3-.2-.31A8.1 8.1 0 0 1 12.05 3.8m-3.3 3.9c-.2 0-.5.07-.77.36-.26.29-1 .98-1 2.4 0 1.4 1.03 2.77 1.17 2.96.14.2 2 3.2 4.93 4.36 2.44.96 2.94.77 3.47.72.53-.05 1.7-.7 1.94-1.37.24-.67.24-1.25.17-1.37-.07-.12-.26-.2-.55-.34-.29-.14-1.7-.84-1.97-.94-.26-.1-.46-.14-.65.15-.19.29-.74.93-.9 1.12-.17.2-.34.22-.62.07-.29-.14-1.22-.45-2.32-1.43a8.6 8.6 0 0 1-1.6-2c-.17-.28-.02-.44.13-.58.13-.13.28-.34.43-.5.14-.17.19-.3.29-.49.1-.19.05-.36-.03-.5-.07-.15-.63-1.56-.89-2.13-.23-.5-.47-.44-.65-.45z"/></svg>
+                            {% elif link.platform == 'youtube' %}
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M21.58 7.19a2.5 2.5 0 0 0-1.76-1.77C18.25 5 12 5 12 5s-6.25 0-7.82.42A2.5 2.5 0 0 0 2.42 7.2C2 8.76 2 12 2 12s0 3.24.42 4.81a2.5 2.5 0 0 0 1.76 1.77C5.75 19 12 19 12 19s6.25 0 7.82-.42a2.5 2.5 0 0 0 1.76-1.77C22 15.24 22 12 22 12s0-3.24-.42-4.81M10 15.2V8.8L15.6 12z"/></svg>
+                            {% elif link.platform == 'x' %}
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.21-6.82-5.97 6.82H1.67l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.08 4.13H5.12z"/></svg>
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </footer>
+    <div class="chatbot" id="chatbot">
+        <div class="chatbot__backdrop" data-chatbot-close></div>
+        <section class="chatbot__panel" role="dialog" aria-label="Asistente MAS tour">
+            <header class="chatbot__header">
+                <div class="chatbot__brand">
+                    <span class="chatbot__avatar">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6ba629" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+                    </span>
+                    <span class="chatbot__titles">
+                        <span class="chatbot__title">Asistente MAS tour</span>
+                        <span class="chatbot__status"><span class="chatbot__status-dot"></span>En línea</span>
+                    </span>
+                </div>
+                <button type="button" class="chatbot__close" data-chatbot-close aria-label="Cerrar chat">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+                </button>
+            </header>
+            <div class="chatbot__body" id="chatbot-body">
+                <div class="chatbot__quick-replies" id="chatbot-quick-replies">
+                    <button type="button" class="chatbot__chip" data-chatbot-quick>Ver excursiones</button>
+                    <button type="button" class="chatbot__chip" data-chatbot-quick>Precios</button>
+                    <button type="button" class="chatbot__chip" data-chatbot-quick>Contactar agente</button>
+                </div>
+            </div>
+            <form class="chatbot__input-bar" id="chatbot-form">
+                {% csrf_token %}
+                <input type="text" class="chatbot__input" id="chatbot-input" placeholder="Escribe un mensaje..."
+                       autocomplete="off" maxlength="1000" aria-label="Escribe un mensaje">
+                <button type="submit" class="chatbot__send" aria-label="Enviar mensaje">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </button>
+            </form>
+        </section>
+        <button type="button" class="chatbot__fab" id="chatbot-fab" aria-label="Abrir chat" aria-expanded="false">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+        </button>
+    </div>
+    <script src="{% static 'js/chatbot.js' %}" defer data-chatbot-url="{% url 'chatbot:chat_messages' %}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

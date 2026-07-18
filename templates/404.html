@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Página no encontrada — MAS tour{% endblock %}
+
+{% block content %}
+<div class="notfound">
+    <div class="notfound__illustration-wrap">
+        <img src="{% static 'img/404-illustration.png' %}" alt="Ilustración tropical 404" class="notfound__illustration">
+        <span class="badge-category notfound__badge">Cuba 404</span>
+    </div>
+    <div class="notfound__content">
+        <p class="notfound__kicker">
+            <span class="badge-category badge-category--static">Cuba 404</span>
+            <span class="notfound__kicker-text">Ruta Perdida en el Caribe</span>
+        </p>
+        <h1 class="notfound__title">
+            <span class="only-mobile">¡Oops! Ruta no encontrada</span>
+            <span class="only-desktop">Parece que nos hemos desviado del mapa</span>
+        </h1>
+        <p class="notfound__text">
+            <span class="only-mobile">Parece que esta playa o rincón de Cuba no está registrado en nuestro
+                itinerario. Pero no te preocupes, ¡tenemos decenas de destinos espectaculares esperándote!</span>
+            <span class="only-desktop">La excursión o página que buscas no existe o ha zarpado hacia otro destino.
+                Pero la aventura en Cuba no termina aquí: puedes volver al inicio o descubrir nuestra selección
+                de excursiones activas hoy mismo.</span>
+        </p>
+        <div class="notfound__actions">
+            <a href="{% url 'tours:excursion_list' %}" class="btn btn--primary">Volver al inicio</a>
+            <a href="{% url 'tours:excursion_list' %}" class="btn btn--outline btn--outline-bold">
+                <span class="only-mobile">Ver excursiones disponibles</span>
+                <span class="only-desktop">Explorar excursiones</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

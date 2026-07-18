@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Próximas excursiones — MAS tour{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <h1 class="page-title">Próximas excursiones</h1>
+    <p class="page-subtitle">Explora Cuba con la seguridad y confianza de MAS tour</p>
+</div>
+
+<form method="get" class="filters" aria-label="Filtros">
+    <div class="select-wrap">
+        <select name="categoria" onchange="this.form.submit()">
+            <option value="">Todas las categorías</option>
+            {% for category in categories %}
+                <option value="{{ category.pk }}" {% if selected_category == category.pk|stringformat:'s' %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="select-wrap">
+        <select name="localidad" onchange="this.form.submit()">
+            <option value="">Todos los destinos</option>
+            {% for location in locations %}
+                <option value="{{ location.pk }}" {% if selected_location == location.pk|stringformat:'s' %}selected{% endif %}>
+                    {{ location.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <noscript><button type="submit" class="btn btn--outline">Filtrar</button></noscript>
+</form>
+
+{% if excursion_entries %}
+    <div class="card-grid">
+        {% for entry in excursion_entries %}
+            <article class="card">
+                <a href="{% url 'tours:excursion_detail' entry.excursion.pk %}" class="card__media">
+                    {% if entry.excursion.cover_photo %}
+                        <img src="{{ entry.excursion.cover_photo.image.url }}" alt="{{ entry.excursion.name }}" loading="lazy">
+                    {% else %}
+                        <div class="card__placeholder">🏝️</div>
+                    {% endif %}
+                    <span class="badge-category">{{ entry.excursion.category.name }}</span>
+                </a>
+                <div class="card__body">
+                    <div class="card__titles">
+                        <h2 class="card__title">
+                            <a href="{% url 'tours:excursion_detail' entry.excursion.pk %}">{{ entry.excursion.name }}</a>
+                        </h2>
+                        <p class="card__location">📍 {{ entry.excursion.destination.name }}</p>
+                    </div>
+                    <p class="card__prices">
+                        Adultos: <strong class="price-value">${{ entry.excursion.adult_price|floatformat:'2u' }}</strong>
+                        · Niños: <strong class="price-value">${{ entry.excursion.child_price|floatformat:'2u' }}</strong>
+                    </p>
+                    <ul class="slot-chips">
+                        {% for slot in entry.slots|slice:':4' %}
+                            <li class="chip {% if slot.is_sold_out %}chip--full{% else %}chip--available{% endif %}">
+                                {{ slot.date|date:'d M' }} ·
+                                {% if slot.is_sold_out %}Agotada{% else %}{{ slot.seats_available }} plazas{% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <a href="{% url 'tours:excursion_detail' entry.excursion.pk %}" class="btn btn--primary btn--block">
+                        Ver detalles y reservar
+                    </a>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <div class="empty-state__icon">🌴</div>
+        <p class="empty-state__title">No hay excursiones disponibles para los próximos días</p>
+        <p class="empty-state__text">Prueba cambiando los filtros o revisa nuestra oferta completa.</p>
+        <a href="{% url 'tours:excursion_list' %}" class="btn btn--outline">Ver todas las excursiones</a>
+    </div>
+{% endif %}
+{% endblock %}
