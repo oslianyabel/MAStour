@@ -24,12 +24,6 @@
                     <span class="badge-category badge-category--static">{{ slot.excursion.category.name }}</span>
                 </div>
                 {% if slot.memory and slot.memory.images.all %}
-                    {% if slot.memory.title %}
-                        <p class="past-card__memory-title">{{ slot.memory.title }}</p>
-                    {% endif %}
-                    {% if slot.memory.description %}
-                        <p class="past-card__memory-text">{{ slot.memory.description|linebreaksbr }}</p>
-                    {% endif %}
                     <div class="photo-strip">
                         {% for image in slot.memory.images.all %}
                             <figure class="memory-figure">

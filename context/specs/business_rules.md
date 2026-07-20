@@ -35,6 +35,18 @@
 - Elementos: "Excursiones disponibles" (home), "Excursiones realizadas", "Preguntas
   frecuentes" y "Sobre Nosotros".
 
+## Nomencladores
+- Categorías, localidades, guías, ofertas gastronómicas y **actividades opcionales** son
+  catálogos independientes. Las excursiones referencian actividades opcionales mediante una
+  relación muchos-a-muchos (una misma actividad puede reutilizarse en varias excursiones).
+- La edad del guía es opcional.
+- Las coordenadas de latitud/longitud aceptan alta precisión (hasta 15 decimales).
+
+## Panel de administración
+- Al crear/editar un registro, si hay cambios sin guardar y se intenta salir del formulario
+  (clic en el menú lateral, migas de pan, botón atrás, cerrar pestaña), se pide confirmación
+  para evitar perder los datos.
+
 ## Reservas
 - Una reserva pertenece a una salida e indica cantidad de adultos, cantidad de niños (hasta 12),
   dirección, nombre y teléfono del representante.

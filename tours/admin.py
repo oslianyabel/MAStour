@@ -22,6 +22,17 @@ from tours.models import (
 from tours.services import refresh_slot_statuses
 
 
+class UnsavedChangesAdminMixin:
+    """Warns before leaving an add/change form with unsaved changes."""
+
+    class Media:
+        js = ('admin/js/unsaved_changes.js',)
+
+
+class BaseModelAdmin(UnsavedChangesAdminMixin, admin.ModelAdmin):
+    """Base admin that adds the unsaved-changes guard to every registered model."""
+
+
 class ExcursionPhotoInline(admin.TabularInline):
     model = ExcursionPhoto
     extra = 1
@@ -29,11 +40,6 @@ class ExcursionPhotoInline(admin.TabularInline):
 
 class ExcursionVideoInline(admin.TabularInline):
     model = ExcursionVideo
-    extra = 0
-
-
-class OptionalActivityInline(admin.TabularInline):
-    model = OptionalActivity
     extra = 0
 
 
@@ -45,11 +51,18 @@ class SlotInline(admin.TabularInline):
 
 
 @admin.register(Excursion)
-class ExcursionAdmin(admin.ModelAdmin):
+class ExcursionAdmin(BaseModelAdmin):
     list_display = ['name', 'destination', 'category', 'adult_price', 'child_price', 'is_active']
     list_filter = ['category', 'destination', 'is_active']
     search_fields = ['name', 'description']
-    inlines = [ExcursionPhotoInline, ExcursionVideoInline, OptionalActivityInline, SlotInline]
+    filter_horizontal = ['optional_activities']
+    inlines = [ExcursionPhotoInline, ExcursionVideoInline, SlotInline]
+
+
+@admin.register(OptionalActivity)
+class OptionalActivityAdmin(BaseModelAdmin):
+    list_display = ['name', 'price']
+    search_fields = ['name']
 
 
 class ReservationInline(admin.TabularInline):
@@ -59,7 +72,7 @@ class ReservationInline(admin.TabularInline):
 
 
 @admin.register(Slot)
-class SlotAdmin(admin.ModelAdmin):
+class SlotAdmin(BaseModelAdmin):
     list_display = [
         'excursion',
         'date',
@@ -97,7 +110,7 @@ class SlotAdmin(admin.ModelAdmin):
 
 
 @admin.register(Reservation)
-class ReservationAdmin(admin.ModelAdmin):
+class ReservationAdmin(BaseModelAdmin):
     list_display = [
         'representative_name',
         'representative_phone',
@@ -117,49 +130,49 @@ class ReservationAdmin(admin.ModelAdmin):
 
 
 @admin.register(Guide)
-class GuideAdmin(admin.ModelAdmin):
+class GuideAdmin(BaseModelAdmin):
     list_display = ['name', 'age', 'sex']
     search_fields = ['name']
 
 
 @admin.register(GastronomicOffer)
-class GastronomicOfferAdmin(admin.ModelAdmin):
+class GastronomicOfferAdmin(BaseModelAdmin):
     list_display = ['name', 'price']
     search_fields = ['name']
 
 
 @admin.register(PickupPoint)
-class PickupPointAdmin(admin.ModelAdmin):
+class PickupPointAdmin(BaseModelAdmin):
     list_display = ['name', 'location']
     list_filter = ['location']
     search_fields = ['name']
 
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(BaseModelAdmin):
     search_fields = ['name']
 
 
 @admin.register(Location)
-class LocationAdmin(admin.ModelAdmin):
+class LocationAdmin(BaseModelAdmin):
     search_fields = ['name']
 
 
 @admin.register(SocialLink)
-class SocialLinkAdmin(admin.ModelAdmin):
+class SocialLinkAdmin(BaseModelAdmin):
     list_display = ['platform', 'url', 'is_active']
     list_editable = ['url', 'is_active']
 
 
 @admin.register(TeamMember)
-class TeamMemberAdmin(admin.ModelAdmin):
+class TeamMemberAdmin(BaseModelAdmin):
     list_display = ['name', 'role', 'order', 'is_active']
     list_editable = ['order', 'is_active']
     search_fields = ['name', 'role']
 
 
 @admin.register(Faq)
-class FaqAdmin(admin.ModelAdmin):
+class FaqAdmin(BaseModelAdmin):
     list_display = ['question', 'order', 'is_active']
     list_editable = ['order', 'is_active']
     search_fields = ['question', 'answer']
@@ -171,7 +184,7 @@ class MemoryImageInline(admin.TabularInline):
 
 
 @admin.register(Memory)
-class MemoryAdmin(admin.ModelAdmin):
+class MemoryAdmin(BaseModelAdmin):
     list_display = ['__str__', 'slot', 'images_count_display', 'created_at']
     inlines = [MemoryImageInline]
 

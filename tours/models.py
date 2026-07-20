@@ -46,7 +46,7 @@ class Guide(models.Model):
 
     name: models.CharField = models.CharField('nombre', max_length=150)
     photo: models.ImageField = models.ImageField('foto', upload_to='guides/', blank=True)
-    age: models.PositiveIntegerField = models.PositiveIntegerField('edad')
+    age: models.PositiveIntegerField = models.PositiveIntegerField('edad', null=True, blank=True)
     sex: models.CharField = models.CharField('sexo', max_length=1, choices=Sex.choices)
 
     class Meta:
@@ -96,11 +96,14 @@ class Excursion(models.Model):
     category: models.ForeignKey = models.ForeignKey(
         Category, on_delete=models.PROTECT, related_name='excursions', verbose_name='categoría'
     )
+    optional_activities: models.ManyToManyField = models.ManyToManyField(
+        'OptionalActivity', blank=True, related_name='excursions', verbose_name='actividades opcionales'
+    )
     latitude: models.DecimalField = models.DecimalField(
-        'latitud', max_digits=9, decimal_places=6, null=True, blank=True
+        'latitud', max_digits=18, decimal_places=15, null=True, blank=True
     )
     longitude: models.DecimalField = models.DecimalField(
-        'longitud', max_digits=9, decimal_places=6, null=True, blank=True
+        'longitud', max_digits=18, decimal_places=15, null=True, blank=True
     )
     is_active: models.BooleanField = models.BooleanField('activa', default=True)
 
@@ -122,12 +125,9 @@ class Excursion(models.Model):
 
 
 class OptionalActivity(models.Model):
-    """Optional activity offered inside an excursion."""
+    """Catalog of optional activities that excursions can offer."""
 
-    excursion: models.ForeignKey = models.ForeignKey(
-        Excursion, on_delete=models.CASCADE, related_name='optional_activities', verbose_name='excursión'
-    )
-    name: models.CharField = models.CharField('nombre', max_length=200)
+    name: models.CharField = models.CharField('nombre', max_length=200, unique=True)
     description: models.TextField = models.TextField('descripción', blank=True)
     price: models.DecimalField = models.DecimalField(
         'precio',
@@ -318,8 +318,6 @@ class Memory(models.Model):
         limit_choices_to={'status': Slot.Status.COMPLETED},
         help_text='Solo se puede asociar a salidas completadas.',
     )
-    title: models.CharField = models.CharField('título', max_length=200, blank=True)
-    description: models.TextField = models.TextField('descripción', blank=True)
     created_at: models.DateTimeField = models.DateTimeField('creado', auto_now_add=True)
 
     class Meta:
@@ -328,7 +326,7 @@ class Memory(models.Model):
         ordering = ['-created_at']
 
     def __str__(self) -> str:
-        return self.title or f'Recuerdos de {self.slot}'
+        return f'Recuerdos de {self.slot}'
 
 
 class MemoryImage(models.Model):

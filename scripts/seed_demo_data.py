@@ -67,9 +67,10 @@ def seed() -> None:
             'longitude': Decimal('-79.996100'),
         },
     )
-    OptionalActivity.objects.get_or_create(
-        excursion=beach_tour, name='Snorkel en el arrecife', defaults={'price': Decimal('10.00')}
+    snorkel, _ = OptionalActivity.objects.get_or_create(
+        name='Snorkel en el arrecife', defaults={'price': Decimal('10.00')}
     )
+    beach_tour.optional_activities.add(snorkel)
 
     river_tour, _ = Excursion.objects.get_or_create(
         name='Salto del Caburní',
@@ -146,10 +147,7 @@ def seed() -> None:
             'return_time': datetime.time(17, 0),
         },
     )
-    memory, memory_created = Memory.objects.get_or_create(
-        slot=past_slot,
-        defaults={'title': 'Un día inolvidable en Ancón', 'description': 'Sol, arena y snorkel.'},
-    )
+    memory, memory_created = Memory.objects.get_or_create(slot=past_slot)
     if memory_created:
         static_img_dir = Path(__file__).resolve().parent.parent / 'static' / 'img'
         memory_images = [
