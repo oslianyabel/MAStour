@@ -46,6 +46,9 @@
 - Al crear/editar un registro, si hay cambios sin guardar y se intenta salir del formulario
   (clic en el menú lateral, migas de pan, botón atrás, cerrar pestaña), se pide confirmación
   para evitar perder los datos.
+- Todos los campos de imagen (guías, ofertas gastronómicas, fotos de excursión, puntos de
+  recogida, equipo, imágenes de recuerdos) muestran una miniatura en el listado y una vista
+  previa en el formulario, sin necesidad de abrir el archivo.
 
 ## Reservas
 - Una reserva pertenece a una salida e indica cantidad de adultos, cantidad de niños (hasta 12),

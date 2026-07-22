@@ -29,13 +29,56 @@ class UnsavedChangesAdminMixin:
         js = ('admin/js/unsaved_changes.js',)
 
 
+class ImagePreviewMixin:
+    """Renders image thumbnails in the admin list and change form.
+
+    Set ``image_field_name`` to the model's ImageField/FileField name and add
+    ``image_thumb`` to ``list_display`` and ``image_preview`` to ``readonly_fields``.
+    """
+
+    image_field_name = 'image'
+    preview_height = 220
+    thumb_size = 48
+
+    def _image(self, obj):  # noqa: ANN001, ANN202
+        return getattr(obj, self.image_field_name, None) if obj else None
+
+    @admin.display(description='imagen')
+    def image_thumb(self, obj):  # noqa: ANN001, ANN201
+        image = self._image(obj)
+        if not image:
+            return '—'
+        return format_html(
+            '<img src="{}" style="height:{}px;width:{}px;border-radius:6px;'
+            'object-fit:cover;border:1px solid #e5e7eb;" />',
+            image.url,
+            self.thumb_size,
+            self.thumb_size,
+        )
+
+    @admin.display(description='vista previa')
+    def image_preview(self, obj):  # noqa: ANN001, ANN201
+        image = self._image(obj)
+        if not image:
+            return '—'
+        return format_html(
+            '<img src="{}" style="max-height:{}px;max-width:340px;border-radius:8px;'
+            'object-fit:contain;border:1px solid #e5e7eb;" />',
+            image.url,
+            self.preview_height,
+        )
+
+
 class BaseModelAdmin(UnsavedChangesAdminMixin, admin.ModelAdmin):
     """Base admin that adds the unsaved-changes guard to every registered model."""
 
 
-class ExcursionPhotoInline(admin.TabularInline):
+class ExcursionPhotoInline(ImagePreviewMixin, admin.TabularInline):
     model = ExcursionPhoto
+    image_field_name = 'image'
     extra = 1
+    fields = ['image', 'image_preview', 'photo_type', 'caption']
+    readonly_fields = ['image_preview']
 
 
 class ExcursionVideoInline(admin.TabularInline):
@@ -130,20 +173,26 @@ class ReservationAdmin(BaseModelAdmin):
 
 
 @admin.register(Guide)
-class GuideAdmin(BaseModelAdmin):
-    list_display = ['name', 'age', 'sex']
+class GuideAdmin(ImagePreviewMixin, BaseModelAdmin):
+    image_field_name = 'photo'
+    list_display = ['image_thumb', 'name', 'age', 'sex']
+    readonly_fields = ['image_preview']
     search_fields = ['name']
 
 
 @admin.register(GastronomicOffer)
-class GastronomicOfferAdmin(BaseModelAdmin):
-    list_display = ['name', 'price']
+class GastronomicOfferAdmin(ImagePreviewMixin, BaseModelAdmin):
+    image_field_name = 'image'
+    list_display = ['image_thumb', 'name', 'price']
+    readonly_fields = ['image_preview']
     search_fields = ['name']
 
 
 @admin.register(PickupPoint)
-class PickupPointAdmin(BaseModelAdmin):
-    list_display = ['name', 'location']
+class PickupPointAdmin(ImagePreviewMixin, BaseModelAdmin):
+    image_field_name = 'image'
+    list_display = ['image_thumb', 'name', 'location']
+    readonly_fields = ['image_preview']
     list_filter = ['location']
     search_fields = ['name']
 
@@ -165,9 +214,11 @@ class SocialLinkAdmin(BaseModelAdmin):
 
 
 @admin.register(TeamMember)
-class TeamMemberAdmin(BaseModelAdmin):
-    list_display = ['name', 'role', 'order', 'is_active']
+class TeamMemberAdmin(ImagePreviewMixin, BaseModelAdmin):
+    image_field_name = 'photo'
+    list_display = ['image_thumb', 'name', 'role', 'order', 'is_active']
     list_editable = ['order', 'is_active']
+    readonly_fields = ['image_preview']
     search_fields = ['name', 'role']
 
 
@@ -178,9 +229,12 @@ class FaqAdmin(BaseModelAdmin):
     search_fields = ['question', 'answer']
 
 
-class MemoryImageInline(admin.TabularInline):
+class MemoryImageInline(ImagePreviewMixin, admin.TabularInline):
     model = MemoryImage
+    image_field_name = 'image'
     extra = 3
+    fields = ['image', 'image_preview', 'caption']
+    readonly_fields = ['image_preview']
 
 
 @admin.register(Memory)
