@@ -49,6 +49,10 @@
 - Todos los campos de imagen (guías, ofertas gastronómicas, fotos de excursión, puntos de
   recogida, equipo, imágenes de recuerdos) muestran una miniatura en el listado y una vista
   previa en el formulario, sin necesidad de abrir el archivo.
+- El formulario de excursión incluye un selector de ubicación en mapa (Leaflet + OpenStreetMap):
+  un botón abre un mapa de Cuba donde al hacer clic (o arrastrar el marcador) se rellenan
+  automáticamente los campos de latitud y longitud. Esos dos campos se muestran sin localizar
+  (con punto decimal) para que el mapa pueda leerlos y escribirlos.
 
 ## Reservas
 - Una reserva pertenece a una salida e indica cantidad de adultos, cantidad de niños (hasta 12),

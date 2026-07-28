@@ -101,6 +101,21 @@ class ExcursionAdmin(BaseModelAdmin):
     filter_horizontal = ['optional_activities']
     inlines = [ExcursionPhotoInline, ExcursionVideoInline, SlotInline]
 
+    class Media:
+        css = {'all': ('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',)}
+        js = (
+            'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+            'admin/js/location_picker.js',
+        )
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):  # noqa: ANN001, ANN201, ANN003
+        formfield = super().formfield_for_dbfield(db_field, request, **kwargs)
+        # Keep coordinates dot-formatted (unlocalized) so the map picker can read/write them.
+        if db_field.name in ('latitude', 'longitude') and formfield is not None:
+            formfield.localize = False
+            formfield.widget.is_localized = False
+        return formfield
+
 
 @admin.register(OptionalActivity)
 class OptionalActivityAdmin(BaseModelAdmin):
