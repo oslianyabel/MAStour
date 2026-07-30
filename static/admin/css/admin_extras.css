@@ -1,0 +1,148 @@
+/* Admin UX extras: image delete button, 12h time picker, readable date label. */
+
+/* ---------- Image preview + delete ---------- */
+.image-preview-box {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+}
+
+.delete-image-button {
+    background: #fdecea;
+    color: #c0392b;
+    border: 1px solid #f5c6c0;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    line-height: 1.4;
+}
+
+.delete-image-button:hover:not(:disabled) {
+    background: #c0392b;
+    color: #fff;
+}
+
+.delete-image-button:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.image-preview-empty {
+    font-size: 12px;
+    font-style: italic;
+    color: #6b7280;
+}
+
+/* ---------- 12-hour time picker ---------- */
+.time-picker-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.time-picker-toggle {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 2px 7px;
+    font-size: 14px;
+    cursor: pointer;
+    line-height: 1.6;
+}
+
+.time-picker-toggle:hover {
+    background: #e5e7eb;
+}
+
+.time-picker-panel {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 1200;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    padding: 10px;
+    width: 250px;
+}
+
+.time-picker-section + .time-picker-section {
+    margin-top: 8px;
+}
+
+.time-picker-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin-bottom: 4px;
+    letter-spacing: 0.03em;
+}
+
+.time-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+}
+
+.time-picker-option {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 5px;
+    padding: 5px 0;
+    font-size: 12px;
+    cursor: pointer;
+    color: #1f2937;
+}
+
+.time-picker-option:hover {
+    background: #e5e7eb;
+}
+
+.time-picker-option.is-selected {
+    background: #4a5d23;
+    border-color: #4a5d23;
+    color: #fff;
+    font-weight: 700;
+}
+
+.time-picker-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.time-picker-now,
+.time-picker-close {
+    flex: 1;
+    border-radius: 6px;
+    padding: 5px 0;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid #d1d5db;
+    background: #f3f4f6;
+    color: #1f2937;
+}
+
+.time-picker-close {
+    background: #4a5d23;
+    border-color: #4a5d23;
+    color: #fff;
+}
+
+/* ---------- Readable date label ---------- */
+.date-label {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 12px;
+    color: #4a5d23;
+    font-weight: 600;
+    white-space: nowrap;
+}

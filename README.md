@@ -32,6 +32,9 @@ confirmación vía WhatsApp.
 - Redes sociales (Instagram, Facebook, WhatsApp, YouTube, X) gestionables desde el admin y
   mostradas en el footer; el enlace de WhatsApp alimenta el CTA de contacto de "Sobre Nosotros".
 - Equipo de "Sobre Nosotros" (nombre, cargo, frase, foto, orden) editable desde el admin.
+- Admin con UX mejorada: borrado de imágenes en un clic (con confirmación), selector de hora
+  en 12 h (AM/PM), fecha en texto junto al campo, selector de ubicación en mapa y aviso de
+  cambios sin guardar.
 - Estado de salidas Pendiente/Completada con transición automática al vencer la hora de
   retorno (zona horaria de La Habana); las completadas dejan de ser reservables.
 - "Recuerdos": álbumes de imágenes por salida completada (admin) mostrados en la página

@@ -1,6 +1,8 @@
 from django.contrib import admin
+from django.db import models
 from django.utils.html import format_html
 
+from tours.admin_widgets import TwelveHourTimeField, format_time_12h
 from tours.models import (
     Category,
     Excursion,
@@ -22,11 +24,30 @@ from tours.models import (
 from tours.services import refresh_slot_statuses
 
 
-class UnsavedChangesAdminMixin:
-    """Warns before leaving an add/change form with unsaved changes."""
+class AdminEnhancementsMixin:
+    """Shared admin UX: unsaved-changes guard, image delete buttons, time/date helpers."""
 
     class Media:
-        js = ('admin/js/unsaved_changes.js',)
+        css = {'all': ('admin/css/admin_extras.css',)}
+        js = (
+            'admin/js/unsaved_changes.js',
+            'admin/js/image_delete.js',
+            'admin/js/time_picker.js',
+            'admin/js/date_label.js',
+        )
+
+
+class TwelveHourTimeAdminMixin:
+    """Renders TimeFields with the 12-hour (AM/PM) widget and clock picker."""
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):  # noqa: ANN001, ANN201, ANN003
+        if isinstance(db_field, models.TimeField) and not isinstance(db_field, models.DateTimeField):
+            defaults = {'form_class': TwelveHourTimeField}
+            if db_field.blank:
+                defaults['required'] = False
+            defaults.update(kwargs)
+            return db_field.formfield(**defaults)
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 
 class ImagePreviewMixin:
@@ -61,16 +82,37 @@ class ImagePreviewMixin:
         image = self._image(obj)
         if not image:
             return '—'
-        return format_html(
+        preview = format_html(
             '<img src="{}" style="max-height:{}px;max-width:340px;border-radius:8px;'
-            'object-fit:contain;border:1px solid #e5e7eb;" />',
+            'object-fit:contain;border:1px solid #e5e7eb;display:block;" />',
             image.url,
             self.preview_height,
         )
+        if not obj.pk:
+            return preview
+        meta = obj._meta
+        field = meta.get_field(self.image_field_name)
+        # A required image IS the record's content, so removing it deletes the record.
+        deletes_record = 'true' if not field.blank else 'false'
+        button = format_html(
+            '<button type="button" class="delete-image-button" '
+            'data-model="{}.{}" data-pk="{}" data-field="{}" data-deletes-record="{}" '
+            'title="Eliminar imagen">🗑 Eliminar imagen</button>',
+            meta.app_label,
+            meta.model_name,
+            obj.pk,
+            self.image_field_name,
+            deletes_record,
+        )
+        return format_html('<div class="image-preview-box">{}{}</div>', preview, button)
 
 
-class BaseModelAdmin(UnsavedChangesAdminMixin, admin.ModelAdmin):
-    """Base admin that adds the unsaved-changes guard to every registered model."""
+class BaseModelAdmin(AdminEnhancementsMixin, TwelveHourTimeAdminMixin, admin.ModelAdmin):
+    """Base admin that applies the shared admin UX to every registered model."""
+
+
+class BaseTabularInline(TwelveHourTimeAdminMixin, admin.TabularInline):
+    """Tabular inline with the same 12-hour time widgets as the main forms."""
 
 
 class ExcursionPhotoInline(ImagePreviewMixin, admin.TabularInline):
@@ -86,7 +128,7 @@ class ExcursionVideoInline(admin.TabularInline):
     extra = 0
 
 
-class SlotInline(admin.TabularInline):
+class SlotInline(BaseTabularInline):
     model = Slot
     extra = 0
     show_change_link = True
@@ -134,7 +176,7 @@ class SlotAdmin(BaseModelAdmin):
     list_display = [
         'excursion',
         'date',
-        'departure_time',
+        'departure_time_display',
         'status',
         'capacity',
         'seats_taken_display',
@@ -151,6 +193,10 @@ class SlotAdmin(BaseModelAdmin):
     def get_queryset(self, request):  # noqa: ANN001, ANN201
         refresh_slot_statuses()
         return super().get_queryset(request)
+
+    @admin.display(description='salida', ordering='departure_time')
+    def departure_time_display(self, slot: Slot) -> str:
+        return format_time_12h(slot.departure_time)
 
     @admin.display(description='vendidas')
     def seats_taken_display(self, slot: Slot) -> int:

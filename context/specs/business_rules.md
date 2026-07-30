@@ -49,6 +49,13 @@
 - Todos los campos de imagen (guías, ofertas gastronómicas, fotos de excursión, puntos de
   recogida, equipo, imágenes de recuerdos) muestran una miniatura en el listado y una vista
   previa en el formulario, sin necesidad de abrir el archivo.
+- Cada imagen tiene un botón "🗑 Eliminar imagen" que pide confirmación y la borra al momento,
+  sin necesidad de marcar "Limpiar" y guardar. Si la imagen es opcional se vacía el campo; si
+  es el contenido obligatorio del registro (fotos de excursión, imágenes de recuerdos) se
+  elimina el registro completo. El archivo se borra también del almacenamiento.
+- Los campos de hora usan formato de 12 horas (AM/PM) y ofrecen un selector tipo reloj
+  desplegable (hora, minutos y AM/PM, más "Ahora").
+- Los campos de fecha muestran a su derecha la fecha en texto: 08/07/2026 → "8 de julio del 2026".
 - El formulario de excursión incluye un selector de ubicación en mapa (Leaflet + OpenStreetMap):
   un botón abre un mapa de Cuba donde al hacer clic (o arrastrar el marcador) se rellenan
   automáticamente los campos de latitud y longitud. Esos dos campos se muestran sin localizar

@@ -3,11 +3,15 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
+from tours.admin_views import delete_image
+
 admin.site.site_header = 'MAS tour — Administración'
 admin.site.site_title = 'MAS tour Admin'
 admin.site.index_title = 'Panel de gestión'
 
 urlpatterns = [
+    # Must be declared before the admin so it is not swallowed by its catch-all patterns.
+    path('admin/tools/delete-image/', delete_image, name='admin_delete_image'),
     path('admin/', admin.site.urls),
     path('', include('tours.urls')),
     path('chatbot/', include('chatbot.urls')),
