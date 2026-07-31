@@ -1,6 +1,12 @@
-from django.contrib import admin
+import os
+from urllib.parse import urlencode
+
+from django.contrib import admin, messages
+from django.core.files.base import ContentFile
 from django.db import models
+from django.urls import reverse
 from django.utils.html import format_html
+from import_export.admin import ImportExportModelAdmin
 
 from tours.admin_widgets import TwelveHourTimeField, format_time_12h
 from tours.models import (
@@ -22,6 +28,22 @@ from tours.models import (
     TeamMember,
 )
 from tours.services import refresh_slot_statuses
+
+
+def _copy_file(source_field, target_field) -> bool:  # noqa: ANN001
+    """Copy the bytes of one FileField into another; return False if unreadable."""
+    try:
+        source_field.open('rb')
+        content = source_field.read()
+    except (FileNotFoundError, OSError, ValueError):
+        return False
+    finally:
+        try:
+            source_field.close()
+        except (OSError, ValueError):
+            pass
+    target_field.save(os.path.basename(source_field.name), ContentFile(content), save=False)
+    return True
 
 
 class AdminEnhancementsMixin:
@@ -107,8 +129,8 @@ class ImagePreviewMixin:
         return format_html('<div class="image-preview-box">{}{}</div>', preview, button)
 
 
-class BaseModelAdmin(AdminEnhancementsMixin, TwelveHourTimeAdminMixin, admin.ModelAdmin):
-    """Base admin that applies the shared admin UX to every registered model."""
+class BaseModelAdmin(AdminEnhancementsMixin, TwelveHourTimeAdminMixin, ImportExportModelAdmin):
+    """Base admin with the shared UX plus import/export (CSV, XLSX, JSON…)."""
 
 
 class BaseTabularInline(TwelveHourTimeAdminMixin, admin.TabularInline):
@@ -142,6 +164,7 @@ class ExcursionAdmin(BaseModelAdmin):
     search_fields = ['name', 'description']
     filter_horizontal = ['optional_activities']
     inlines = [ExcursionPhotoInline, ExcursionVideoInline, SlotInline]
+    change_form_template = 'admin/tours/excursion/change_form.html'
 
     class Media:
         css = {'all': ('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',)}
@@ -157,6 +180,73 @@ class ExcursionAdmin(BaseModelAdmin):
             formfield.localize = False
             formfield.widget.is_localized = False
         return formfield
+
+    @staticmethod
+    def _duplicate_url(excursion: Excursion) -> str:
+        """URL of the add form pre-filled with this excursion's data (no name, no slots)."""
+        params: dict[str, str] = {
+            'description': excursion.description,
+            'adult_price': excursion.adult_price,
+            'child_price': excursion.child_price,
+            'destination': excursion.destination_id,
+            'category': excursion.category_id,
+            '_duplicate_from': excursion.pk,
+        }
+        if excursion.latitude is not None:
+            params['latitude'] = excursion.latitude
+        if excursion.longitude is not None:
+            params['longitude'] = excursion.longitude
+        if excursion.is_active:
+            # A checkbox is checked for any non-empty value, so only send it when True.
+            params['is_active'] = '1'
+        activity_ids = list(excursion.optional_activities.values_list('pk', flat=True))
+        if activity_ids:
+            params['optional_activities'] = ','.join(str(pk) for pk in activity_ids)
+        return f'{reverse("admin:tours_excursion_add")}?{urlencode(params)}'
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):  # noqa: ANN001, ANN201
+        excursion = self.get_object(request, object_id)
+        extra_context = extra_context or {}
+        if excursion is not None:
+            extra_context['duplicate_url'] = self._duplicate_url(excursion)
+        return super().change_view(request, object_id, form_url, extra_context)
+
+    def save_related(self, request, form, formsets, change):  # noqa: ANN001, ANN201
+        super().save_related(request, form, formsets, change)
+        source_pk = request.GET.get('_duplicate_from')
+        if change or not source_pk:
+            return
+        source = Excursion.objects.filter(pk=source_pk).first()
+        if source is None:
+            return
+        copied = self._copy_media(source, form.instance)
+        if copied:
+            self.message_user(
+                request,
+                f'Se copiaron {copied} archivos (fotos y videos) desde «{source.name}».',
+                messages.INFO,
+            )
+
+    @staticmethod
+    def _copy_media(source: Excursion, target: Excursion) -> int:
+        """Copy the source excursion's photos and videos onto the new one."""
+        copied = 0
+        for photo in source.photos.all():
+            new_photo = ExcursionPhoto(
+                excursion=target, photo_type=photo.photo_type, caption=photo.caption
+            )
+            if photo.image and _copy_file(photo.image, new_photo.image):
+                new_photo.save()
+                copied += 1
+        for video in source.videos.all():
+            new_video = ExcursionVideo(
+                excursion=target, title=video.title, video_url=video.video_url
+            )
+            has_file = bool(video.video_file) and _copy_file(video.video_file, new_video.video_file)
+            if has_file or video.video_url:
+                new_video.save()
+                copied += 1
+        return copied
 
 
 @admin.register(OptionalActivity)

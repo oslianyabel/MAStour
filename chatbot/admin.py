@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.http import HttpRequest
+from import_export.admin import ImportExportModelAdmin
 
 from chatbot.models import ChatbotPrompt, ChatMessage
 
@@ -13,7 +14,7 @@ class ChatbotPromptForm(forms.ModelForm):
 
 
 @admin.register(ChatbotPrompt)
-class ChatbotPromptAdmin(admin.ModelAdmin):
+class ChatbotPromptAdmin(ImportExportModelAdmin):
     form = ChatbotPromptForm
     list_display = ['__str__', 'updated_at']
 
@@ -25,7 +26,7 @@ class ChatbotPromptAdmin(admin.ModelAdmin):
 
 
 @admin.register(ChatMessage)
-class ChatMessageAdmin(admin.ModelAdmin):
+class ChatMessageAdmin(ImportExportModelAdmin):
     list_display = ['session_key', 'role', 'content', 'created_at']
     list_filter = ['role', 'created_at']
     search_fields = ['session_key', 'content']

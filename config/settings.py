@@ -50,9 +50,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'import_export',
     'tours',
     'chatbot',
 ]
+
+# Import/export: wrap each import in a transaction so a failing row rolls everything back.
+IMPORT_EXPORT_USE_TRANSACTIONS = True
+IMPORT_EXPORT_SKIP_ADMIN_LOG = False
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -1,0 +1,10 @@
+{% extends "admin/change_form.html" %}
+
+{% block object-tools-items %}
+{% if duplicate_url %}
+<li>
+    <a href="{{ duplicate_url }}" class="duplicate-link">📄 Duplicar excursión</a>
+</li>
+{% endif %}
+{{ block.super }}
+{% endblock %}

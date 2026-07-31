@@ -35,6 +35,10 @@ confirmación vía WhatsApp.
 - Admin con UX mejorada: borrado de imágenes en un clic (con confirmación), selector de hora
   en 12 h (AM/PM), fecha en texto junto al campo, selector de ubicación en mapa y aviso de
   cambios sin guardar.
+- Duplicación de excursiones desde el admin (copia datos, actividades, fotos y videos; deja
+  el nombre vacío y sin salidas).
+- Importación y exportación de datos en todas las tablas del admin (CSV, XLSX, JSON…) vía
+  django-import-export.
 - Estado de salidas Pendiente/Completada con transición automática al vencer la hora de
   retorno (zona horaria de La Habana); las completadas dejan de ser reservables.
 - "Recuerdos": álbumes de imágenes por salida completada (admin) mostrados en la página

@@ -56,6 +56,14 @@
 - Los campos de hora usan formato de 12 horas (AM/PM) y ofrecen un selector tipo reloj
   desplegable (hora, minutos y AM/PM, más "Ahora").
 - Los campos de fecha muestran a su derecha la fecha en texto: 08/07/2026 → "8 de julio del 2026".
+- El detalle de una excursión ofrece "Duplicar excursión": abre el formulario de creación con
+  todos los datos de la excursión de referencia (descripción, precios, destino, categoría,
+  coordenadas, actividades opcionales), dejando el **nombre vacío** y **sin salidas**. Al
+  guardar, se copian también sus fotos y videos como archivos independientes; nada se crea
+  en la base de datos hasta que el usuario guarda.
+- Todas las tablas del admin permiten importar y exportar datos (CSV, XLSX, TSV, JSON, YAML,
+  HTML). Las importaciones muestran una previsualización de los cambios y se aplican dentro de
+  una transacción: si una fila falla, no se aplica ninguna.
 - El formulario de excursión incluye un selector de ubicación en mapa (Leaflet + OpenStreetMap):
   un botón abre un mapa de Cuba donde al hacer clic (o arrastrar el marcador) se rellenan
   automáticamente los campos de latitud y longitud. Esos dos campos se muestran sin localizar
